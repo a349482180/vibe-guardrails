@@ -1,0 +1,45 @@
+name: tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        python-version: ["3.8", "3.11", "3.13"]
+        exclude:
+          - os: macos-latest
+            python-version: "3.8"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Run rule tests
+        run: python3 tests/test_guard.py
+
+      - name: Verify the hook responds over stdin
+        run: |
+          echo '{"tool_name":"Bash","tool_input":{"command":"rm -rf /"}}' \
+            | python3 hooks/guard.py | grep -q '"permissionDecision": "deny"'
+          echo '{"tool_name":"Bash","tool_input":{"command":"npm install"}}' \
+            | python3 hooks/guard.py | grep -q . && exit 1 || true
+
+      - name: Verify install and uninstall
+        shell: bash
+        run: |
+          export HOME="$(mktemp -d)"
+          bash ./install.sh
+          test -f "$HOME/.claude/vibe-guardrails/guard.py"
+          python3 -c "import json;d=json.load(open('$HOME/.claude/settings.json'));assert d['hooks']['PreToolUse']"
+          bash ./install.sh --uninstall
+          test ! -d "$HOME/.claude/vibe-guardrails"

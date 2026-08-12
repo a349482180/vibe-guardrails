@@ -1,0 +1,35 @@
+{
+  "_readme": [
+    "Your local overrides. This file is yours; reinstalling will not overwrite it.",
+    "这是你自己的配置文件，重新安装不会覆盖它。",
+    "",
+    "allow   -- regex patterns that are never inspected, checked before any rule.",
+    "           Use this when the guard keeps stopping something you do every day.",
+    "           当某条日常命令被反复拦截时，写在这里放行。",
+    "",
+    "disable -- rule ids to switch off entirely.",
+    "           The id is printed in every message, e.g. [filesystem] rm-rf-broad",
+    "           要彻底关掉的规则 id，每次拦截提示里都会显示。",
+    "",
+    "rules   -- your own rules. Reusing a built-in id overrides that rule.",
+    "           自定义规则；id 与内置规则相同则覆盖内置规则。",
+    "           severity: critical | high | medium",
+    "           balanced 模式下：critical 直接拒绝，high 和 medium 询问。",
+    "",
+    "An example rule you might want, if you have a production server:",
+    "  {",
+    "    \"id\": \"no-prod-ssh\",",
+    "    \"category\": \"custom\",",
+    "    \"severity\": \"critical\",",
+    "    \"pattern\": \"\\\\b(ssh|scp)\\\\b[^\\\\n]*\\\\bprod\\\\b\",",
+    "    \"zh\": \"这条命令会连到生产服务器，请自己手动执行。\",",
+    "    \"en\": \"This connects to a production server. Do that yourself.\"",
+    "  }"
+  ],
+
+  "allow": [],
+
+  "disable": [],
+
+  "rules": []
+}
